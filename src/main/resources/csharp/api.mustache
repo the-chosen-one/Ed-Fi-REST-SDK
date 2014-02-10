@@ -1,0 +1,59 @@
+  using System;
+  using System.Collections.Generic;
+  using {{invokerPackage}};
+  using {{modelPackage}};
+  using RestSharp;
+  
+  {{#imports}}
+  {{/imports}}
+
+  namespace {{package}} {
+    {{#operations}}
+    public class {{classname}} {
+
+      private readonly IRestClient client;
+
+      public {{classname}}(IRestClient client)
+      {
+            this.client = client;
+      }
+      
+      {{#operation}}
+
+      /// <summary>
+      /// {{summary}} {{notes}}
+      /// </summary>
+      {{#allParams}}/// <param name="{{paramName}}">{{description}}</param>
+      {{#hasMore}} {{/hasMore}}{{/allParams}}
+      /// <returns></returns>
+      public {{#returnType}}IRestResponse<{{{returnType}}}> {{/returnType}}{{^returnType}}IRestResponse {{/returnType}} {{nickname}}({{#allParams}}{{{dataType}}} {{paramName}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
+        var request = new RestRequest("{{path}}", Method.{{httpMethod}});
+        request.RequestFormat = DataFormat.Json;
+
+        {{#pathParams}}request.AddUrlSegment("{{paramName}}", {{paramName}});
+        {{/pathParams}}
+
+        {{#requiredParamCount}}
+        // verify required params are set
+        if ({{/requiredParamCount}}{{#requiredParams}} {{paramName}} == null {{#hasMore}}|| {{/hasMore}}{{/requiredParams}}{{#requiredParamCount}}) {
+           throw new ArgumentException("API method call is missing required parameters");
+        }
+        {{/requiredParamCount}}
+
+        {{#queryParams}}if ({{paramName}} != null){
+          request.AddParameter("{{paramName}}", {{paramName}});
+		}
+        {{/queryParams}}
+
+        {{#headerParams}}request.AddHeader("{{paramName}}", {{paramName}});
+        {{/headerParams}}
+        
+        {{#bodyParam}}request.AddBody({{bodyParam}});
+        {{/bodyParam}}
+
+        return client.Execute{{#returnType}}<{{{returnType}}}>{{/returnType}}(request);   
+      }
+      {{/operation}}
+    }
+    {{/operations}}
+  }

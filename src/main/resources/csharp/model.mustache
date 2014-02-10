@@ -1,0 +1,20 @@
+using System;
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+
+{{#models}}
+{{#model}}
+namespace {{package}} {
+  public class {{classname}} {
+    {{#vars}}
+
+    {{#description}}/* {{{description}}} */
+    {{/description}}
+    public {{{datatype}}} {{name}} { get; set; }
+
+    {{/vars}}
+  }
+{{/model}}
+{{/models}}
+}

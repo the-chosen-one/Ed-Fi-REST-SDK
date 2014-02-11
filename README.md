@@ -13,6 +13,7 @@ The following are known issues for the SDK generator.
 * The EducationOrganizationTelephone, EducationOrganizationIdentificationCode, EducationOrganizationCategory, and EducationOrganizationAddress are missing.
 * Model properties aren't Pascal-cased (currently lower camel cased).
 * The generator does not work with the AZ sandbox since that sandbox requires a new deployment.
+* Generating from the "other" section does not currently work.
 
 ###Instructions on Generating an Ed-Fi REST SDK
 

@@ -33,14 +33,14 @@ Before starting, clone the codebase. This is the same repository for C# and Java
 
 Parameter names for the command to run the generator -
 
-* Target language - As of 2/10/14, C# is the only one supported.
-* Section Url - At the top of the Swagger page, there is a drop down list that shows how the resources are broken into separate sections (Resources, Types, Descriptors, and Other).
+* Target Language - As of 2/10/14, C# is the only one supported.
+* Section  - At the top of the Swagger page, there is a drop down list that shows how the resources are broken into separate sections (Resources, Types, Descriptors, and Other).
 * Destination Folder - This is the folder where you would like the code files to be created.
 * API Namespace - Namespace for the classes that expose methods that map to resources and verbs (e.g. GetSchoolsAll).
 * SDK Namespace - Namespace for the general classes that support the REST API interaction (e.g. TokenRetriever to authenticate with OAuth2).
 * Model Namespace - Namespace for the entities that are exchanged with the REST API.
 
-java -jar sdk-generate.jar csharp --url https://tn-rest-production.cloudapp.net/metadata/{section name}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace}
+java -jar sdk-generate.jar csharp --url https://tn-rest-production.cloudapp.net/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace}
 
 6) Create a new class library in Visual Studio and include all of the generated files. From there, plug in the API URI, key, and secret in the code below to your application to get the list of schools. The example below is from a simple Console application.
 

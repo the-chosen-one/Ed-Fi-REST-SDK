@@ -21,9 +21,9 @@ object EdFiRestGeneratorLauncher {
 
   def main(args: Array[String]) = {
     val parser = new OptionParser[CommandlineConfig]("java -jar sdk-generate.jar") {
-      head("sdk-generate v1.0 - Generate an SDK for the Ed-Fi Rest API")
+      head("sdk-generate v1.1 - Generate an SDK for the Ed-Fi Rest API")
 
-      arg[String]("target language") required() action { (x, c) => c.copy(generator = x)} validate { x => if (x == "csharp") success else failure("Only 'csharp' currently supported as a target language.") } text("The target language. Choices are: csharp")
+      arg[String]("target-language") required() action { (x, c) => c.copy(generator = x)} validate { x => if (x == "csharp" || x == "java") success else failure("Only 'csharp' and 'java' currently supported as a target language.") } text("The target language. Choices are: csharp, java")
       opt[String]('u', "url") required() text("The url of a Ed-Fi Rest API metadata endpoint, such as the ones for resources, types and descriptors.  Example: 'https://tn-rest-production.cloudapp.net/metadata/descriptors/api-docs'")
       opt[String]('b', "baseDir") required() text("The base directory for the output of generated SDK files.")
       opt[String]('h', "helperPackage") required() text("The namespace/package and directory structure for generated SDK helper classes.  Example: 'EdFi.Ods.Generated.Sdk'.")
@@ -33,7 +33,11 @@ object EdFiRestGeneratorLauncher {
     }
 
     parser.parse(args, CommandlineConfig()) map { config =>
-      CSharpEdFiRestGenerator.main(args.tail);
+      config.generator match {
+        case "csharp" => CSharpEdFiRestGenerator.main(args.tail)
+        case "java" => JavaEdFiRestGenerator.main(args.tail)
+        case _ => System.exit(0)
+      }
     } getOrElse {
       System.exit(0)
     }

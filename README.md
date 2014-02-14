@@ -1,6 +1,6 @@
 ###Generating an Ed-Fi REST SDK
 
-The Ed-Fi REST API exposes metadata describing the exposed resources as well as the inputs, verbs, and schema of the entities involved. This metadata is what the Swagger UI consumes to show the documentation and provide the ability to play with the API through a user interface. This same exact metadata is now being used to generate an SDK for both .NET and Java (Java supported is targeted for 2/24).
+The Ed-Fi REST API exposes metadata describing the exposed resources as well as the inputs, verbs, and schema of the entities involved. This metadata is what the Swagger UI consumes to show the documentation and provide the ability to play with the API through a user interface. This same exact metadata is now being used to generate an SDK for both .NET and Java.
 
 It's worth noting why we are releasing an SDK generator instead of an actual SDK. With the adoption rate of the Ed-Fi REST API across several states, many vendors will be integrating with the platform in various flavors - each one differing by the data extensions for a particular state. By releasing an SDK generator, each vendor is free to generate the SDK for each state on demand without waiting for an update to a separate SDK repository.
 
@@ -8,10 +8,10 @@ It's worth noting why we are releasing an SDK generator instead of an actual SDK
 
 The following are known issues for the SDK generator.
 
-* It does not properly handle the if-none-match and if-match functionality. You will notice in the API code that those parameter names are missing the hyphens which make those parameters unrecognizable by the API.
+* It does not properly handle the If-None-Match and If-Match functionality. You will notice in the API code that those parameter names are missing the hyphens which make those parameters unrecognizable by the API.
 * No support for async calls yet.
 * The EducationOrganizationTelephone, EducationOrganizationIdentificationCode, EducationOrganizationCategory, and EducationOrganizationAddress are missing.
-* Model properties aren't Pascal-cased (currently lower camel cased).
+* Model properties aren't Pascal-cased in C# (currently lower camel cased).
 * The generator does not work with the AZ sandbox since that sandbox requires a new deployment.
 * Generating from the "other" section does not currently work.
 
@@ -33,20 +33,32 @@ Before starting, clone the codebase. This is the same repository for C# and Java
 
 Parameter names for the command to run the generator -
 
-* Target Language - As of 2/10/14, C# is the only one supported.
+* Target Language - Either C# (csharp) or Java (java).
 * Section  - At the top of the Swagger page, there is a drop down list that shows how the resources are broken into separate sections (Resources, Types, Descriptors, and Other).
 * Destination Folder - This is the folder where you would like the code files to be created.
 * API Namespace - Namespace for the classes that expose methods that map to resources and verbs (e.g. GetSchoolsAll).
 * SDK Namespace - Namespace for the general classes that support the REST API interaction (e.g. TokenRetriever to authenticate with OAuth2).
 * Model Namespace - Namespace for the entities that are exchanged with the REST API.
 
+**C#**
+
+1) Generate C# source files by running the generator once for each for each API section: descriptors, resources, and types.
+
+```
 java -jar sdk-generate.jar csharp --url https://tn-rest-production.cloudapp.net/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace}
+```
 
-6) Create a new class library in Visual Studio and include all of the generated files. From there, plug in the API URI, key, and secret in the code below to your application to get the list of schools. The example below is from a simple Console application.
+2) Create a new class library in Visual Studio and include all of the generated files.
 
-Before this will compile, use the Package Manager Console to install Restsharp - Install-Package Restsharp
+3) Use the Package Manager Console to install the RestSharp library.
 
-```C#
+```
+Install-Package Restsharp
+```
+
+4) Take the sample code below and plug in the API URI, client key, and client secret in the code below to get the list of schools. The example below is from a simple Console application.
+
+```
 // Trust all SSL certs -- needed unless signed SSL certificates are configured.
 System.Net.ServicePointManager.ServerCertificateValidationCallback =
     ((sender, certificate, chain, sslPolicyErrors) => true);
@@ -56,11 +68,11 @@ var oauthUrl = "https://{Root Administration Portal URI}";
 var clientKey = "{API Key}";
 var clientSecret = "{API Secret}";
 
-// TokenRetriever makes the oauth  calls
-var tokenRetriever = new TokenRetriever(oauthUrl, clientKey, clientSecret);
-
-// Install RestSharp via NuGet
+// RestSharp dependency, install via NuGet
 var client = new RestClient("https://{Root REST API URI}/api/v1.0");
+
+// TokenRetriever makes the oauth calls
+var tokenRetriever = new TokenRetriever(oauthUrl, clientKey, clientSecret);
 
 // Plug Oauth into RestSharp's authentication scheme
 client.Authenticator = new BearerTokenAuthenticator(tokenRetriever);
@@ -70,7 +82,7 @@ var api = new SchoolsApi(client);
 
 var response = api.GetSchoolsAll(null, null); // offset, limit
 
-var httpReponseCode = response.StatusCode; // should be System.Net.HttpStatusCode.OK
+var httpReponseCode = response.StatusCode; // returns System.Net.HttpStatusCode.OK
 var schools = response.Data;
 
 Console.WriteLine("Response code is " + httpReponseCode);
@@ -79,4 +91,50 @@ foreach(var school in schools)
 {
     Console.WriteLine(school.nameOfInstitution);
 }
+```
+
+**Java**
+
+1) Generate Java source files by running the generator once for each for each API section: descriptors, resources, and types.
+
+```
+java -jar sdk-generate.jar java --url https://tn-rest-production.cloudapp.net/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace}
+```
+
+2) Create a new Maven project in Eclipse and import all of the generated files.
+
+3) Overwrite the default pom.xml with the example.pom.xml file that was generated. The generated code has dependencies on JAX-RS (Jersey here), a JAX-RS JSON provider (Jackson here), and the Guava project.
+
+4) Take the sample code below and plug in the API URI, client key, and client secret in the code below to get the list of schools. The example below is from a simple console application.
+
+```
+// Trust all SSL certs -- needed unless signed SSL certificates are configured.
+CertificateValidationDisabler.disable();  // generated helper class
+
+// Oauth configuration
+String oauthUrl = "https://{Root Administration Portal URI}";
+String clientKey = "{API Key}";
+String clientSecret = "{API Secret}";
+
+// TokenRetriever makes the oauth calls
+TokenRetriever tokenRetriever = new RestApiTokenRetriever(oauthUrl, clientKey, clientSecret);
+
+// JAX-RS dependency, installed via Maven
+ClientBuilder clientBuilder = ClientBuilder.newBuilder();
+Client client = clientBuilder.build().register(new BearerTokenAuthenticator(tokenRetriever));
+WebTarget target = client.target("https://{Root REST API URI}/api/v1.0");
+
+// GET schools
+SchoolsApi api = new SchoolsApi(target);
+
+// RestResponse wraps a JAX-RS Response to provide a properly typed readEntity() method
+RestResponse<List<School>> response = api.GetSchoolsAll(null, null); // offset, limit
+
+int httpReponseCode = response.getStatus(); // returns Response.Status.OK
+System.out.println("Response code is " + httpReponseCode);
+
+for (School school : response.readEntity()) {
+    System.out.println(school.getNameOfInstitution());
+}
+
 ```

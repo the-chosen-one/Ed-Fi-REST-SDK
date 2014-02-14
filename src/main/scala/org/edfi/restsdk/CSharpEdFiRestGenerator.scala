@@ -14,7 +14,7 @@ object CSharpEdFiRestGenerator extends BasicCSharpGenerator {
 
   def main(args: Array[String]) = {
     val parser = new OptionParser[CommandlineConfig]("java -jar sdk-generate.jar csharp") {
-      head("sdk-generate csharp v1.0 - Generate a C# SDK for the Ed-Fi Rest API")
+      head("sdk-generate csharp v1.1 - Generate a C# SDK for the Ed-Fi Rest API")
       opt[String]('u', "url") required() action { (x, c) => c.copy(url = x)} text("The url of a Ed-Fi Rest API metadata endpoint, such as the ones for resources, types and descriptors.  Example: 'https://tn-rest-production.cloudapp.net/metadata/descriptors/api-docs'")
       opt[String]('b', "baseDir") required() action { (x, c) => c.copy(baseDir = x)} text("The base directory for the output of generated SDK files.")
       opt[String]('h', "helperPackage") required() action { (x, c) => c.copy(helperPackage = x)} text("The C# namespace and directory structure for generated SDK helper classes.  Example: 'EdFi.Ods.Generated.Sdk'.")
@@ -102,8 +102,6 @@ object CSharpEdFiRestGenerator extends BasicCSharpGenerator {
   }
   
   override def toDeclaredType(dt: String): String = {
-    //TODO: this is mostly copy/paste from superclass, may need to use toPascalGenericFriendly here
-
     val declaredType = dt.indexOf("[") match {
       case -1 => dt
       case n: Int => {

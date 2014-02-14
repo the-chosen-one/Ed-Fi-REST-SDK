@@ -1,0 +1,396 @@
+package {{invokerPackage}};
+
+import java.lang.annotation.Annotation;
+import java.net.URI;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Link;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.StatusType;
+
+import com.google.common.reflect.TypeToken;
+
+/**
+ * Decorator of a javax.ws.rs.core.Response that provides a typed readEntity() method.  The underlying Response
+ * object is available via the getResponse() method.  All other methods delegate to the underlying Response object.
+ *
+ * @param <T> the expected type of the result of the rest call
+ */
+public class RestResponse<T> {
+    private final Response response;
+    @SuppressWarnings("serial")
+    private final TypeToken<T> type = new TypeToken<T>(getClass()){};
+  
+    public RestResponse(Response response) {
+        this.response = response;
+    }
+  
+    /**
+     * Returns the underlying response object.
+     * @return the underlying response object
+     */
+    public Response getResponse() {
+        return response;
+    }
+  
+    /**
+     * A typed version of readEntity that returns the JSON deserialized to the expected type.
+     * This readEntity buffers the response so that the underlying Response object may also
+     * be used.
+     * 
+     * @return a typed version of the response
+     * @throws ProcessingException if the content of the message cannot be mapped to an entity of the requested type
+     * @throws IllegalStateException if the entity is not backed by an input stream, the response has been closed already,
+     * or if the entity input stream has been fully consumed already and has not been buffered prior consuming
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public T readEntity() throws ProcessingException, IllegalStateException {
+      response.bufferEntity();
+      return (T) response.readEntity(new GenericType(type.getType()));
+    }
+  
+  
+  
+////////////////  The rest of the methods just delegate to the underlying Response object
+
+    /**
+     * Get the status code associated with the response.
+     * @return the response status code
+     */
+    public int getStatus() {
+        return response.getStatus();
+    }
+    
+    /**
+     * Get the complete status information associated with the response.
+     * @return the response status information. The returned value is never null
+     */
+    public StatusType getStatusInfo() {
+        return response.getStatusInfo();
+    }
+
+    /**
+     * Get the message entity Java instance. Returns null if the message does not contain an entity body.
+     * If the entity is represented by an un-consumed input stream the method will return the input stream.
+     * @return the message entity or null if message does not contain an entity body (i.e. when hasEntity() returns false)
+     * @throws IllegalStateException if the entity was previously fully consumed as an input stream, or if the response has been closed
+     */
+    public Object getEntity() throws IllegalStateException {
+        return response.getEntity();
+    }
+
+    /**
+     * Read the message entity input stream as an instance of specified Java type using a MessageBodyReader that supports mapping
+     * the message entity stream onto the requested type.
+     * 
+     * Method throws an ProcessingException if the content of the message cannot be mapped to an entity of the requested type and
+     * IllegalStateException in case the entity is not backed by an input stream or if the original entity input stream has already
+     * been consumed without buffering the entity data prior consuming.
+     *
+     * A message instance returned from this method will be cached for subsequent retrievals via getEntity(). Unless the supplied
+     * entity type is an input stream, this method automatically closes the an unconsumed original response entity data stream if
+     * open. In case the entity data has been buffered, the buffer will be reset prior consuming the buffered data to enable
+     * subsequent invocations of readEntity(...) methods on this response.
+     * 
+     * @param <S> entity instance Java type
+     * @param entityType the type of entity
+     * @return the message entity; for a zero-length response entities returns a corresponding Java object that represents
+     * zero-length data. In case no zero-length representation is defined for the Java type, a ProcessingException wrapping
+     * the underlying NoContentException is thrown
+     * @throws ProcessingException if the content of the message cannot be mapped to an entity of the requested type
+     * @throws IllegalStateException if the entity is not backed by an input stream, the response has been closed already,
+     * or if the entity input stream has been fully consumed already and has not been buffered prior consuming
+     */
+    public <S> S readEntity(final Class<S> entityType) throws ProcessingException, IllegalStateException {
+        return response.readEntity(entityType);
+    }
+
+    /**
+     * Read the message entity input stream as an instance of specified Java type using a MessageBodyReader that supports mapping
+     * the message entity stream onto the requested type.
+     * 
+     * Method throws an ProcessingException if the content of the message cannot be mapped to an entity of the requested type and
+     * IllegalStateException in case the entity is not backed by an input stream or if the original entity input stream has already
+     * been consumed without buffering the entity data prior consuming.
+     *
+     * A message instance returned from this method will be cached for subsequent retrievals via getEntity(). Unless the supplied
+     * entity type is an input stream, this method automatically closes the an unconsumed original response entity data stream if
+     * open. In case the entity data has been buffered, the buffer will be reset prior consuming the buffered data to enable
+     * subsequent invocations of readEntity(...) methods on this response.
+     * 
+     * @param <S> entity instance Java type
+     * @param entityType the type of entity; may be generic
+     * @return the message entity; for a zero-length response entities returns a corresponding Java object that represents
+     * zero-length data. In case no zero-length representation is defined for the Java type, a ProcessingException wrapping
+     * the underlying NoContentException is thrown
+     * @throws ProcessingException if the content of the message cannot be mapped to an entity of the requested type
+     * @throws IllegalStateException if the entity is not backed by an input stream, the response has been closed already,
+     * or if the entity input stream has been fully consumed already and has not been buffered prior consuming
+     */
+    public <S> S readEntity(final GenericType<S> entityType) throws ProcessingException, IllegalStateException {
+        return response.readEntity(entityType);
+    }
+
+    /**
+     * Read the message entity input stream as an instance of specified Java type using a MessageBodyReader that supports mapping
+     * the message entity stream onto the requested type.
+     * 
+     * Method throws an ProcessingException if the content of the message cannot be mapped to an entity of the requested type and
+     * IllegalStateException in case the entity is not backed by an input stream or if the original entity input stream has already
+     * been consumed without buffering the entity data prior consuming.
+     *
+     * A message instance returned from this method will be cached for subsequent retrievals via getEntity(). Unless the supplied
+     * entity type is an input stream, this method automatically closes the an unconsumed original response entity data stream if
+     * open. In case the entity data has been buffered, the buffer will be reset prior consuming the buffered data to enable
+     * subsequent invocations of readEntity(...) methods on this response.
+     * 
+     * @param <S> entity instance Java type
+     * @param entityType the type of entity
+     * @param annotations annotations that will be passed to the MessageBodyReader
+     * @return the message entity; for a zero-length response entities returns a corresponding Java object that represents
+     * zero-length data. In case no zero-length representation is defined for the Java type, a ProcessingException wrapping
+     * the underlying NoContentException is thrown
+     * @throws ProcessingException if the content of the message cannot be mapped to an entity of the requested type
+     * @throws IllegalStateException if the entity is not backed by an input stream, the response has been closed already,
+     * or if the entity input stream has been fully consumed already and has not been buffered prior consuming
+     */
+    public <S> S readEntity(final Class<S> entityType, final Annotation[] annotations)
+            throws ProcessingException, IllegalStateException {
+        return response.readEntity(entityType, annotations);
+    }
+
+    /**
+     * Read the message entity input stream as an instance of specified Java type using a MessageBodyReader that supports mapping
+     * the message entity stream onto the requested type.
+     * 
+     * Method throws an ProcessingException if the content of the message cannot be mapped to an entity of the requested type and
+     * IllegalStateException in case the entity is not backed by an input stream or if the original entity input stream has already
+     * been consumed without buffering the entity data prior consuming.
+     *
+     * A message instance returned from this method will be cached for subsequent retrievals via getEntity(). Unless the supplied
+     * entity type is an input stream, this method automatically closes the an unconsumed original response entity data stream if
+     * open. In case the entity data has been buffered, the buffer will be reset prior consuming the buffered data to enable
+     * subsequent invocations of readEntity(...) methods on this response.
+     * 
+     * @param <S> entity instance Java type
+     * @param entityType the type of entity; may be generic
+     * @param annotations annotations that will be passed to the MessageBodyReader
+     * @return the message entity; for a zero-length response entities returns a corresponding Java object that represents
+     * zero-length data. In case no zero-length representation is defined for the Java type, a ProcessingException wrapping
+     * the underlying NoContentException is thrown
+     * @throws ProcessingException if the content of the message cannot be mapped to an entity of the requested type
+     * @throws IllegalStateException if the entity is not backed by an input stream, the response has been closed already,
+     * or if the entity input stream has been fully consumed already and has not been buffered prior consuming
+     */
+    public <S> S readEntity(final GenericType<S> entityType, final Annotation[] annotations)
+            throws ProcessingException, IllegalStateException {
+        return response.readEntity(entityType, annotations);
+    }
+
+    /**
+     * Check if there is an entity available in the response. The method returns true if the entity is present, returns
+     * false otherwise.  Note that the method may return true also for response messages with a zero-length content, in
+     * case the "Content-Length" and "Content-Type" headers are specified in the message. In such case, an attempt to
+     * read the entity using one of the readEntity(...) methods will return a corresponding instance representing a
+     * zero-length entity for a given Java type or produce a ProcessingException in case no such instance is available
+     * for the Java type.
+     * @return true if there is an entity present in the message, false otherwise
+     * @throws IllegalStateException in case the response has been closed
+     */ 
+    public boolean hasEntity() {
+        return response.hasEntity();
+    }
+
+    /**
+     * Buffer the message entity data.
+     * In case the message entity is backed by an unconsumed entity input stream, all the bytes of the original entity
+     * input stream are read and stored in a local buffer. The original entity input stream is consumed and
+     * automatically closed as part of the operation and the method returns true.
+     *
+     * In case the response entity instance is not backed by an unconsumed input stream an invocation of bufferEntity
+     * method is ignored and the method returns false.
+     *
+     * This operation is idempotent, i.e. it can be invoked multiple times with the same effect which also means that
+     * calling the bufferEntity() method on an already buffered (and thus closed) message instance is legal and has no
+     * further effect. Also, the result returned by the bufferEntity() method is consistent across all invocations of
+     * the method on the same Response instance.
+     *
+     * Buffering the message entity data allows for multiple invocations of readEntity(...) methods on the response
+     * instance. Note however, that once the response instance itself is closed, the implementations are expected to
+     * release the buffered message entity data too. Therefore any subsequent attempts to read a message entity stream
+     * on such closed response will result in an IllegalStateException being thrown.
+     *
+     * @return true if the message entity input stream was available and was buffered successfully, returns false if
+     * the entity stream was not available
+     * @throws ProcessingException if there was an error while buffering the entity input stream
+     * @throws IllegalStateException in case the response has been closed
+     */
+    public boolean bufferEntity() throws ProcessingException {
+        return response.bufferEntity();
+    }
+
+    /**
+     * Close the underlying message entity input stream (if available and open) as well as releases any other resources
+     * associated with the response (e.g. buffered message entity data).
+     * 
+     * This operation is idempotent, i.e. it can be invoked multiple times with the same effect which also means that
+     * calling the close() method on an already closed message instance is legal and has no further effect.
+     *
+     * The close() method should be invoked on all instances that contain an un-consumed entity input stream to ensure
+     * the resources associated with the instance are properly cleaned-up and prevent potential memory leaks. This is
+     * typical for client-side scenarios where application layer code processes only the response headers and ignores
+     * the response entity.
+     *
+     * Any attempts to manipulate (read, get, buffer) a message entity on a closed response will result in an IllegalStateException being thrown
+     * 
+     * @throws ProcessingException if there is an error closing the response
+     */
+    public void close() throws ProcessingException {
+        response.close();
+    }
+
+    /**
+     * Get a message header as a single string value. Each single header value is converted to String using a
+     * RuntimeDelegate.HeaderDelegate if one is available via RuntimeDelegate.createHeaderDelegate(java.lang.Class) for the header
+     * value class or using its toString method if a header delegate is not available.
+     * @param name the message header
+     * @return the message header value. If the message header is not present then null is returned. If the message header is present
+     * but has no value then the empty string is returned. If the message header is present more than once then the values of joined
+     * together and separated by a ',' character
+     */
+    public String getHeaderString(String name) {
+        return response.getHeaderString(name);
+    }
+
+    /**
+     * Get view of the response headers and their string values. The underlying header data may be subsequently modified by the
+     * JAX-RS runtime on the server side. Changes in the underlying header data are reflected in this view.
+     * @return response headers as a string view of header values
+     */
+    public MultivaluedMap<String, String> getStringHeaders() {
+        return response.getStringHeaders();
+    }
+
+    /**
+     * Get the media type of the message entity.
+     * @return the media type or null if there is no response entity
+     */
+    public MediaType getMediaType() {
+        return response.getMediaType();
+    }
+
+    /**
+     * Get the language of the message entity.
+     * @return the language of the entity or null if not specified
+     */
+    public Locale getLanguage() {
+        return response.getLanguage();
+    }
+
+    /**
+     * Get Content-Length value.
+     * @return Content-Length as integer if present and valid number. In other cases returns -1
+     */
+    public int getLength() {
+        return response.getLength();
+    }
+
+    /**
+     * Get any new cookies set on the response message.
+     * @return a read-only map of cookie name (String) to Cookie
+     */
+    public Map<String, NewCookie> getCookies() {
+        return response.getCookies();
+    }
+
+    /**
+     * Get the entity tag.
+     * @return the entity tag, otherwise null if not present
+     */
+    public EntityTag getEntityTag() {
+        return response.getEntityTag();
+    }
+
+    /**
+     * Get message date.
+     * @return the message date, otherwise null if not present
+     */
+    public Date getDate() {
+        return response.getDate();
+    }
+
+    /**
+     * Get the last modified date.
+     * @return the last modified date, otherwise null if not present
+     */
+    public Date getLastModified() {
+        return response.getLastModified();
+    }
+
+    /**
+     * Get the allowed HTTP methods from the Allow HTTP header.
+     * @return the allowed HTTP methods, all methods will returned as upper case strings
+     */
+    public Set<String> getAllowedMethods() {
+        return response.getAllowedMethods();
+    }
+
+    /**
+     * Get the location.
+     * @return the location URI, otherwise null if not present.
+     */
+    public URI getLocation() {
+        return response.getLocation();
+    }
+
+    /**
+     * Get the links attached to the message as headers. Any links in the message
+     * that are relative must be resolved with respect to the actual request URI that
+     * produced this response. Note that request URIs may be updated by filters, so the actual
+     * request URI may differ from that in the original invocation.
+     * @return links, may return empty Set if no links are present. Does not return null
+     */
+    public Set<Link> getLinks() {
+        return response.getLinks();
+    }
+
+    /**
+     * Check if link for relation exists.
+     * @param relation link relation
+     * @return true if the link for the relation is present in the message headers, false otherwise
+     */
+    public boolean hasLink(String relation) {
+        return response.hasLink(relation);
+    }
+
+    /**
+     * Get the link for the relation. A relative link is resolved with respect to the actual request URI
+     * that produced this response. Note that request URIs may be updated by filters, so the actual request
+     * URI may differ from that in the original invocation.
+     * @param relation link relation
+     * @return the link builder for the relation, otherwise null if not present
+     */
+    public Link getLink(String relation) {
+        return response.getLink(relation);
+    }
+
+    /**
+     * Convenience method that returns a Link.Builder for the relation. See getLink(java.lang.String)
+     * for more information.
+     * @param relation link relation
+     * @return the link builder for the relation, otherwise null if not present
+     */
+    public Link.Builder getLinkBuilder(String relation) {
+        return response.getLinkBuilder(relation);
+    }
+
+}

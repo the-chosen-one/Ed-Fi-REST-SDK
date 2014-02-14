@@ -1,0 +1,58 @@
+package {{invokerPackage}};
+
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.*;
+
+// Sledgehammer JVM-wide disabling of SSL certificate validation
+public class CertificateValidationDisabler {
+  public static void disable() {
+    // Create a trust manager that does not validate certificate chains
+    TrustManager[] trustAllCerts = new TrustManager[] { new AllTrustingTrustManager() };
+
+    // Install the all-trusting trust manager
+    try {
+      SSLContext sc = SSLContext.getInstance("SSL");
+      sc.init(null, trustAllCerts, new SecureRandom());
+      HttpsURLConnection
+          .setDefaultSSLSocketFactory(sc.getSocketFactory());
+      HttpsURLConnection.setDefaultHostnameVerifier(new AllVerifyingHostnameVerifier());
+    } catch (Exception e) {
+    }
+  }
+  
+  public static HostnameVerifier newAllVerifyingHostnameVerifier() {
+    return new AllVerifyingHostnameVerifier();
+  }
+  
+  public static SSLContext newAllTrustingSSLContext() {
+    try {
+      SSLContext sslContext = SSLContext.getInstance("SSL");
+      sslContext.init(null, new javax.net.ssl.TrustManager[] { new AllTrustingTrustManager() }, null);
+      return sslContext;
+    } catch (Exception e) {
+      return null;
+    }
+  }
+}
+
+class AllTrustingTrustManager implements X509TrustManager {
+  public X509Certificate[] getAcceptedIssuers() {
+    return new X509Certificate[0];
+  }
+
+  public void checkClientTrusted(X509Certificate[] certs,
+      String authType) {
+  }
+
+  public void checkServerTrusted(X509Certificate[] certs,
+      String authType) {
+  }
+}
+
+class AllVerifyingHostnameVerifier implements HostnameVerifier {
+  public boolean verify(String hostname, SSLSession session) {
+    return true;
+  }
+}

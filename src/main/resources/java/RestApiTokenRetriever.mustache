@@ -1,0 +1,96 @@
+package {{invokerPackage}};
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+public class RestApiTokenRetriever implements TokenRetriever
+{
+    private String oauthUrl;
+    private String clientKey;
+    private String clientSecret;
+
+    public RestApiTokenRetriever(String oauthUrl, String clientKey, String clientSecret)
+    {
+        this.oauthUrl = oauthUrl;
+        this.clientKey = clientKey;
+        this.clientSecret = clientSecret;
+    }
+
+    @Override
+    public String ObtainNewBearerToken() throws AuthenticationException
+    {
+      Client oauthClient = ClientBuilder.newClient();
+      String accessCode = getAccessCode(oauthClient);
+        String bearerToken = getBearerToken(oauthClient, accessCode);
+        oauthClient.close();
+        return bearerToken;
+    }
+
+    private String getAccessCode(Client oauthClient) throws AuthenticationException
+    {
+      WebTarget target = oauthClient.target(oauthUrl + "/oauth/authorize");
+      Form form = new Form("Client_id", clientKey).param("Response_type", "code");
+      Response response = target.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+      
+      try {
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+          AccessCodeResponse accessCodeResponse = response.readEntity(AccessCodeResponse.class);
+          return accessCodeResponse.Code;
+        } else {
+          throw new AuthenticationException("Unable to retrieve an authorization code. Please verify that your application key is correct. Alternately, the service address may not be correct: " +
+                        oauthUrl);
+        }
+      } catch (AuthenticationException e) {
+        throw e;
+      } catch (Throwable t) {
+      throw new AuthenticationException("Unable to retrieve an authorization code. Error message: " + t.getMessage(), t);
+      } finally {
+        response.close();
+      }
+    }
+
+    private String getBearerToken(Client oauthClient, String accessCode) throws AuthenticationException
+    {
+      WebTarget target = oauthClient.target(oauthUrl + "/oauth/token");
+      Form form = new Form("Client_id", clientKey)
+                    .param("Client_secret", clientSecret)
+                    .param("Code", accessCode)
+                    .param("Grant_type", "authorization_code");
+      Response response = target.request().post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+      
+      try {
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+          BearerTokenResponse bearerTokenResponse = response.readEntity(BearerTokenResponse.class);
+          return bearerTokenResponse.Access_token;
+        } else {
+          throw new AuthenticationException("Unable to retrieve an access token. Please verify that your application secret is correct." +
+                        oauthUrl);
+        }
+      } catch (Throwable t) {
+      throw new AuthenticationException("Unable to retrieve an Unable to retrieve an access token. Error message: " + t.getMessage(), t);
+      } finally {
+        response.close();
+      }
+    }
+}
+
+class AccessCodeResponse
+{
+    public String Code;
+    public String State;
+    public String Error;
+}
+
+class BearerTokenResponse
+{
+    public String Access_token;
+    public String Expires_in;
+    public String Token_type;
+    public String Error;
+}
+

@@ -1,0 +1,13 @@
+package {{invokerPackage}};
+
+public class AuthenticationException extends RuntimeException {
+  public AuthenticationException(String message) {
+    super(message);
+  }
+
+  public AuthenticationException(String message, Throwable t) {
+    super(message, t);
+  }
+
+  private static final long serialVersionUID = -7962433641298941052L;
+}

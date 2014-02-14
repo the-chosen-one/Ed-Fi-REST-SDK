@@ -1,0 +1,28 @@
+package {{invokerPackage}};
+
+import java.io.IOException;
+
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.MultivaluedMap;
+
+public class BearerTokenAuthenticator implements ClientRequestFilter {
+
+    private String bearerToken;
+
+    public BearerTokenAuthenticator(TokenRetriever tokenRetriever) throws AuthenticationException
+    {
+        UpdateToken(tokenRetriever);
+    }
+
+    public void UpdateToken(TokenRetriever tokenRetriever) throws AuthenticationException
+    {
+        bearerToken = tokenRetriever.ObtainNewBearerToken();
+    }
+
+  @Override
+  public void filter(ClientRequestContext requestContext) throws IOException {
+    MultivaluedMap<String, Object> headers = requestContext.getHeaders();
+    headers.add("Authorization", "Bearer " + bearerToken);
+  }
+}

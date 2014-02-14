@@ -57,7 +57,7 @@ class BasicJavaGenerator extends BasicGenerator {
     "integer" -> "Integer")
 
   // location of templates
-  override def templateDir = "Java"
+  override def templateDir = "java"
 
   // where to write generated code
   override def destinationDir = "generated-code/java/src/main/java"

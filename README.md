@@ -52,7 +52,7 @@ System.Net.ServicePointManager.ServerCertificateValidationCallback =
     ((sender, certificate, chain, sslPolicyErrors) => true);
 
 // Oauth configuration
-var oauthUrl = "https://{Root REST API URI}";
+var oauthUrl = "https://{Root Administration Portal URI}";
 var clientKey = "{API Key}";
 var clientSecret = "{API Secret}";
 

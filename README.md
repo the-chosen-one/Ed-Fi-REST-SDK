@@ -28,7 +28,7 @@ Before starting, clone the codebase. This is the same repository for C# and Java
 
 4) Open a command prompt to the ed-fi-rest-sdk folder and type "sbt assembly". This will build the Swagger codegen jar file.
 
-5) Navigate to the folder where the jar file was created and run the command from the command prompt for each section in Swagger.
+5) Navigate to the folder where the jar file was created and run the command from the command prompt for each section in Swagger. This location is listed close to the end of the information log that is output during sbt generation.
 
 Parameter names for the command to run the generator -
 
@@ -44,7 +44,7 @@ Parameter names for the command to run the generator -
 1) Generate C# source files by running the generator once for each for each API section: descriptors, resources, and types.
 
 ```
-java -jar sdk-generate.jar csharp --url https://tn-rest-production.cloudapp.net/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace}
+java -jar sdk-generate.jar csharp --url https://{Domain root of API}/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace}
 ```
 
 2) Create a new class library in Visual Studio and include all of the generated files.

@@ -127,7 +127,7 @@ WebTarget target = client.target("https://{Root REST API URI}/api/v1.0");
 SchoolsApi api = new SchoolsApi(target);
 
 // RestResponse wraps a JAX-RS Response to provide a properly typed readEntity() method
-RestResponse<List<School>> response = api.GetSchoolsAll(null, null); // offset, limit
+RestResponse<List<School>> response = api.getSchoolsAll(null, null); // offset, limit
 
 int httpReponseCode = response.getStatus(); // returns Response.Status.OK
 System.out.println("Response code is " + httpReponseCode);

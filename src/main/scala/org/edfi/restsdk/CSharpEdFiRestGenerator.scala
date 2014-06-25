@@ -96,7 +96,8 @@ object CSharpEdFiRestGenerator extends BasicCSharpGenerator {
     name match {
       case _ if (reservedWords.contains(name)) => escapeReservedWord(name)
       case "If-Match" => "IfMatch"
-      case "If-None-Match" => "IfNoneMatch"  
+      case "If-None-Match" => "IfNoneMatch"
+      case "namespace" => "@namespace"
       case _ => name.filterNot(charactersToRemove)
     }
   }

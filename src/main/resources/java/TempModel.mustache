@@ -1,6 +1,6 @@
 package {{modelPackage}};
 
-class EducationOrganizationTelephone
+class EducationOrganizationInstitutionTelephone
 {
   protected String institutionTelephoneNumberType;
   protected String telephoneNumber;
@@ -100,5 +100,52 @@ class EducationOrganizationAddress
   public void setStreetNumberName(String streetNumberName) {
     this.streetNumberName = streetNumberName;
   }
+}
+
+class EducationOrganizationInternationalAddress
+{
+	protected String addressType;
+	protected String AddressLine1;
+	protected String AddressLine2;
+	protected String AddressLine3;
+	protected String AddressLine4;
+	protected String CountryType;
+
+	public String getAddressType() {
+		return addressType;
+	}
+	public void setAddressType(String addressType) {
+		this.addressType = addressType;
+	}
+	public String getAddressLine1() {
+		return AddressLine1;
+	}
+	public void setAddressLine1(String AddressLine1) {
+		this.AddressLine1 = AddressLine1;
+	}
+	public String getAddressLine2() {
+		return AddressLine2;
+	}
+	public void setAddressLine2(String AddressLine2) {
+		this.AddressLine2 = AddressLine2;
+	}
+	public String getAddressLine3() {
+		return AddressLine3;
+	}
+	public void setAddressLine3(String AddressLine3) {
+		this.AddressLine3 = AddressLine3;
+	}
+	public String getAddressLine4() {
+		return AddressLine4;
+	}
+	public void setAddressLine4(String AddressLine4) {
+		this.AddressLine4 = AddressLine4;
+	}
+	public String getCountryType() {
+		return CountryType;
+	}
+	public void setCountryType(String CountryType) {
+		this.CountryType = CountryType;
+	}
 }
 

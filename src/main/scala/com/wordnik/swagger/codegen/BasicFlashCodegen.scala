@@ -61,7 +61,7 @@ abstract class BasicFlashCodegen extends BasicGenerator {
   // file suffix
   override def fileSuffix = ".as"
 
-  override def toVarName(name: String): String = {
+  override def toVarName(name: String, flag: Boolean): String = {
     name.substring(0, 1).toLowerCase + name.substring(1, name.length)
   }
 

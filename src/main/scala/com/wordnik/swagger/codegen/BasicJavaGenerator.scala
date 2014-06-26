@@ -93,7 +93,7 @@ class BasicJavaGenerator extends BasicGenerator {
   // file suffix
   override def fileSuffix = ".java"
 
-  override def toVarName(name: String): String = {
+  override def toVarName(name: String, flag: Boolean): String = {
     val paramName = name.replaceAll("[^a-zA-Z0-9_]","")
     super.toVarName(paramName)
   }

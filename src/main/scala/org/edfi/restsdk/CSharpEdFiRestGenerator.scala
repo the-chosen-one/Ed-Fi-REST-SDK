@@ -9,6 +9,7 @@ import java.io.File
 import javax.net.ssl.TrustManager
 import scala.collection.mutable.HashMap
 import scopt.OptionParser
+import com.wordnik.swagger.codegen.Codegen
                            
 object CSharpEdFiRestGenerator extends BasicCSharpGenerator {
 
@@ -91,14 +92,16 @@ object CSharpEdFiRestGenerator extends BasicCSharpGenerator {
   override def toMethodName(name: String) = name.capitalize
   
   //operation property names on method signature 
-  override def toVarName(name: String): String = {
+  override def toVarName(name: String, flag: Boolean): String = {
     val charactersToRemove = "-".toSet
     name match {
+      case "_etag" => "_Etag"
       case _ if (reservedWords.contains(name)) => escapeReservedWord(name)
+      case _ if (flag) => name.capitalize      
       case "If-Match" => "IfMatch"
       case "If-None-Match" => "IfNoneMatch"
       case "namespace" => "@namespace"
-      case _ => name.filterNot(charactersToRemove)
+      case _ => name.filterNot(charactersToRemove)     
     }
   }
   
@@ -191,5 +194,5 @@ object CSharpEdFiRestGenerator extends BasicCSharpGenerator {
       ("ITokenRetriever.mustache", destinationDir + java.io.File.separator + invokerPackage.get.replace(".", java.io.File.separator), "ITokenRetriever.cs"),
       ("TokenRetriever.mustache", destinationDir + java.io.File.separator + invokerPackage.get.replace(".", java.io.File.separator), "TokenRetriever.cs")
       )
-
+  
 }

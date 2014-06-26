@@ -81,7 +81,7 @@ class BasicObjcGenerator extends BasicGenerator {
   }
 
   // objective c doesn't like variables starting with "new"
-  override def toVarName(name: String): String = {
+  override def toVarName(name: String, flag: Boolean): String = {
     if(name.startsWith("new") || reservedWords.contains(name)) {
       escapeReservedWord(name)
     }

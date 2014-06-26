@@ -61,7 +61,7 @@ class BasicRubyGenerator extends BasicGenerator {
   override def toModelFilename(name: String) = name.toLowerCase
   override def toApiFilename(name: String) = name.toLowerCase + "_api"
 
-  override def toVarName(name: String): String = toUnderscore(name)
+  override def toVarName(name: String, flag: Boolean): String = toUnderscore(name)
 
   override def toMethodName(name: String): String = toUnderscore(name)
 

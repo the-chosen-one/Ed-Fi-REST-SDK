@@ -86,7 +86,7 @@ object JavaEdFiRestGenerator extends BasicJavaGenerator {
   //override def toMethodName(name: String) = name.capitalize
   
   //operation property names on method signature 
-  override def toVarName(name: String): String = {
+  override def toVarName(name: String, flag: Boolean): String = {
     val charactersToRemove = "-".toSet
     name match {
       case _ if (reservedWords.contains(name)) => escapeReservedWord(name)

@@ -461,7 +461,7 @@ class Codegen(config: CodegenConfig) {
 
       val properties =
         HashMap(
-          "name" -> config.toVarName(prop._1),
+          "name" -> config.toVarName(prop._1, true),
           "nameSingular" -> {
             val name = config.toVarName(prop._1)
             if (name.endsWith("s") && name.length > 1) name.substring(0, name.length - 1) else name

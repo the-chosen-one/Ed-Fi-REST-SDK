@@ -106,7 +106,7 @@ abstract class CodegenConfig {
     base + name(0).toUpper + name.substring(1)
   }
 
-  def toVarName(name: String): String = {
+  def toVarName(name: String, flag : Boolean = false): String = {
     name match {
       case _ if (reservedWords.contains(name)) => escapeReservedWord(name)
       case _ => name

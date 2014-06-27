@@ -137,3 +137,31 @@ for (School school : response.readEntity()) {
 }
 
 ```
+
+**extra**
+Generate source files using a powershell command.
+1. Install Jdk  http://blag.koveras.org/2011/12/24/how-to-install-jdk-from-powershell-silently/
+	you will need to write a PowerShell script and run it, and do not forget add the info on setting the 
+	machine-level environment variable JAVA_HOME in the same script.
+	
+2. Install sbt - http://www.jonathanmedd.net/2012/07/automate-msi-installations-with-powershell.html
+   Do not forget adding info on setting the machine-level environment variable in the script. (you also
+   can get setting environment variable help instruction from here:  http://technet.microsoft.com/en-us/library/ff730964.aspx)
+   
+3. Running SBT
+	You can run SBT from your command prompt (Bash, Zsh, Powershell, or DOS Prompt) or go into SBT interactive mode to run commands from within SBT.
+	From the Shell
+
+	You can run any command from sbt from within your shell, by calling a list of tasks as arguments.
+	$sbt clean compile
+	If you wish to run an sbt task that requires arguments, you can pass the task and arguments as one using quotation marks:
+	$sbt clean compile "test-only com.oreilly.testingscala.AlbumTest"
+	
+	for more information, please read chapter one of "Testing" in scala on Google Books.
+
+4. then You can generate each of the C# source files using a powershell command, which is the same:
+```
+   java -jar sdk-generate.jar csharp --url https://{Domain root of API}/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace}
+```
+
+

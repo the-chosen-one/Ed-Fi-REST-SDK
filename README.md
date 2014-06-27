@@ -68,7 +68,7 @@ var clientKey = "{API Key}";
 var clientSecret = "{API Secret}";
 
 // RestSharp dependency, install via NuGet
-var client = new RestClient("https://{Root REST API URI}/api/v1.0");
+var client = new RestClient("https://{Root REST API URI}/api/v1.0/2014");
 
 // TokenRetriever makes the oauth calls
 var tokenRetriever = new TokenRetriever(oauthUrl, clientKey, clientSecret);
@@ -88,7 +88,7 @@ Console.WriteLine("Response code is " + httpReponseCode);
 
 foreach(var school in schools)
 {
-    Console.WriteLine(school.nameOfInstitution);
+    Console.WriteLine(school.NameOfInstitution);
 }
 ```
 
@@ -121,7 +121,7 @@ TokenRetriever tokenRetriever = new RestApiTokenRetriever(oauthUrl, clientKey, c
 // JAX-RS dependency, installed via Maven
 ClientBuilder clientBuilder = ClientBuilder.newBuilder();
 Client client = clientBuilder.build().register(new BearerTokenAuthenticator(tokenRetriever));
-WebTarget target = client.target("https://{Root REST API URI}/api/v1.0");
+WebTarget target = client.target("https://{Root REST API URI}/api/v1.0/2014");
 
 // GET schools
 SchoolsApi api = new SchoolsApi(target);

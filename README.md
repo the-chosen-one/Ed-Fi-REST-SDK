@@ -9,7 +9,6 @@ It's worth noting why we are releasing an SDK generator instead of an actual SDK
 The following are known issues for the SDK generator.
 
 * No support for async calls yet.
-* Generating from the "other" section does not currently work.
 
 ###Instructions on Generating an Ed-Fi REST SDK
 
@@ -17,7 +16,7 @@ Before starting, clone the codebase. This is the same repository for C# and Java
 
 **From Windows**
 
-1) Download the Java SDK from http://www.oracle.com/technetwork/java/javase/downloads/index.html Version 7 or newer is recommended.
+1) Download the Java SDK from http://www.oracle.com/technetwork/java/javase/downloads/index.html Version 7 or newer is recommended. For other section, JRE8 Library is required.
 
 2) Download SBT and install. Just under the "Installing sbt" header download the appropriate package for your operating system. http://www.scala-sbt.org/release/docs/Getting-Started/Setup.html
 

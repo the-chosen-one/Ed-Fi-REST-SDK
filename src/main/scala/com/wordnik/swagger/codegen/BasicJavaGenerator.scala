@@ -70,7 +70,7 @@ class BasicJavaGenerator extends BasicGenerator {
 
   override def reservedWords = Set("abstract", "continue", "for", "new", "switch", "assert", 
       "default", "if", "package", "synchronized", "boolean", "do", "goto", "private", 
-      "this", "break", "double", "implements", "protected", "throw", "byte", "else", 
+      "this", "break", "double", "implements", "protected", "throw", "byte", "else",
       "import", "public", "throws", "case", "enum", "instanceof", "return", "transient", 
       "catch", "extends", "int", "short", "try", "char", "final", "interface", "static", 
       "void", "class", "finally", "long", "strictfp", "volatile", "const", "float", 
@@ -140,6 +140,8 @@ class BasicJavaGenerator extends BasicGenerator {
     var declaredType = toDeclaredType(obj.`type`)
     declaredType match {
       case "Array" => declaredType = "List"
+      case "DateTime" => declaredType = "Date"
+      case "DateTimeOffset" => declaredType = "OffsetDateTime"
       case e: String => e
     }
 

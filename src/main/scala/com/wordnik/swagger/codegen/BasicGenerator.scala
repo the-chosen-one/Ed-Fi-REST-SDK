@@ -144,7 +144,7 @@ abstract class BasicGenerator extends CodegenConfig with PathUtil {
       if(apiDescription.apis != null) {
         apiDescription.apis.foreach(api => {
           for ((apiPath, operation) <- ApiExtractor.extractApiOperations(basePath, api)) {
-            output += Tuple3(basePath, apiPath, operation)
+            output += Tuple3(basePath, schoolYear.get+apiPath, operation)
           }
         })
       }

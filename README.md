@@ -8,10 +8,7 @@ It's worth noting why we are releasing an SDK generator instead of an actual SDK
 
 The following are known issues for the SDK generator.
 
-* It does not properly handle the If-None-Match and If-Match functionality. You will notice in the API code that those parameter names are missing the hyphens which make those parameters unrecognizable by the API.
 * No support for async calls yet.
-* The EducationOrganizationTelephone, EducationOrganizationIdentificationCode, EducationOrganizationCategory, and EducationOrganizationAddress are missing.
-* Model properties aren't Pascal-cased in C# (currently lower camel cased).
 * Generating from the "other" section does not currently work.
 
 ###Instructions on Generating an Ed-Fi REST SDK
@@ -38,13 +35,16 @@ Parameter names for the command to run the generator -
 * API Namespace - Namespace for the classes that expose methods that map to resources and verbs (e.g. GetSchoolsAll).
 * SDK Namespace - Namespace for the general classes that support the REST API interaction (e.g. TokenRetriever to authenticate with OAuth2).
 * Model Namespace - Namespace for the entities that are exchanged with the REST API.
+* schoolYear - Specifying a schoolYear (e.g. 2014)
+
+** (Important: for "other" section, please do not specify a schoolYear **
 
 **C#**
 
-1) Generate C# source files by running the generator once for each for each API section: descriptors, resources, and types.
-
+1) Generate C# source files by running the generator once for each for each API section: descriptors, resources, types and other
+  
 ```
-java -jar sdk-generate.jar csharp --url https://{Domain root of API}/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace}
+java -jar sdk-generate.jar csharp --url https://{Domain root of API}/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace} --schoolYear {schoolYear}
 ```
 
 2) Create a new class library in Visual Studio and include all of the generated files.
@@ -68,7 +68,7 @@ var clientKey = "{API Key}";
 var clientSecret = "{API Secret}";
 
 // RestSharp dependency, install via NuGet
-var client = new RestClient("https://{Root REST API URI}/api/v1.0/2014");
+var client = new RestClient("https://{Root REST API URI}/api/v1.0/");
 
 // TokenRetriever makes the oauth calls
 var tokenRetriever = new TokenRetriever(oauthUrl, clientKey, clientSecret);
@@ -97,7 +97,7 @@ foreach(var school in schools)
 1) Generate Java source files by running the generator once for each for each API section: descriptors, resources, and types.
 
 ```
-java -jar sdk-generate.jar java --url https://tn-rest-production.cloudapp.net/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace}
+java -jar sdk-generate.jar java --url https://tn-rest-production.cloudapp.net/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace} --schoolYear {schoolYear}
 ```
 
 2) Create a new Maven project in Eclipse and import all of the generated files.
@@ -161,7 +161,7 @@ for (School school : response.readEntity()) {
 
 4. then You can generate each of the C# source files using a powershell command, just like the one mentioned above:
 ```
-   java -jar sdk-generate.jar csharp --url https://{Domain root of API}/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace}
+   java -jar sdk-generate.jar csharp --url https://{Domain root of API}/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace} --schoolYear {schoolYear}
 ```
 
 

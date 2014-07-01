@@ -11,11 +11,12 @@ object JavaEdFiRestGenerator extends BasicJavaGenerator {
   def main(args: Array[String]) = {
     val parser = new OptionParser[CommandlineConfig]("java -jar sdk-generate.jar java") {
       head("sdk-generate java v1.1 - Generate a Java SDK for the Ed-Fi Rest API")
-      opt[String]('u', "url") required() action { (x, c) => c.copy(url = x)} text("The url of a Ed-Fi Rest API metadata endpoint, such as the ones for resources, types and descriptors.  Example: 'https://tn-rest-production.cloudapp.net/metadata/descriptors/api-docs'")
+      opt[String]('u', "url") required() action { (x, c) => c.copy(url = x)} text("The url of a Ed-Fi Rest API metadata endpoint, such as the ones for resources, types, descriptors and other.  Example: 'https://tn-rest-production.cloudapp.net/metadata/descriptors/api-docs'")
       opt[String]('b', "baseDir") required() action { (x, c) => c.copy(baseDir = x)} text("The base directory for the output of generated SDK files.")
       opt[String]('h', "helperPackage") required() action { (x, c) => c.copy(helperPackage = x)} text("The Java package and directory structure for generated SDK helper classes.  Example: 'edfi.ods.generated.sdk'.")
       opt[String]('m', "modelPackage") required() action { (x, c) => c.copy(modelPackage = x)} text("The Java package and directory structure for generated SDK model classes.  Example: 'edfi.ods.generated.model'.")
       opt[String]('a', "apiPackage") required() action { (x, c) => c.copy(apiPackage = x)} text("The Java package and directory structure for generated SDK API classes.  Example: 'edfi.ods.generated.api'.")
+      opt[String]('s', "schoolYear") action { (x, c) => c.copy(schoolYear = x)} text("Specify a schoolYear  Example: '2014'.")
     }
 
     parser.parse(args, CommandlineConfig()) map { config =>
@@ -23,6 +24,7 @@ object JavaEdFiRestGenerator extends BasicJavaGenerator {
       _invokerPackage = Some(config.helperPackage)
       _modelPackage = Some(config.modelPackage)
       _apiPackage = Some(config.apiPackage)
+      _schoolYear = Some(config.schoolYear)
       
       // adapting to old style feed of args to generator, only needs url
       generateClient(Array(config.url))      
@@ -75,6 +77,10 @@ object JavaEdFiRestGenerator extends BasicJavaGenerator {
   override def apiPackage = _apiPackage
   private var _apiPackage = Some("edfi.ods.generated.api")
   
+  // specify a school year
+  override def schoolYear = _schoolYear
+  private var _schoolYear = Some("")
+  
   //by default, model class filenames are same capitalization as resource
   //  need to capitalize to make Pascal case
   override def toModelFilename(name: String) = name.capitalize
@@ -89,6 +95,7 @@ object JavaEdFiRestGenerator extends BasicJavaGenerator {
   override def toVarName(name: String, flag: Boolean): String = {
     val charactersToRemove = "-".toSet
     name match {
+      case "byte" => "Byte"
       case _ if (reservedWords.contains(name)) => escapeReservedWord(name)
       case "If-Match" => "ifMatch"
       case "If-None-Match" => "ifNoneMatch"  
@@ -107,7 +114,7 @@ object JavaEdFiRestGenerator extends BasicJavaGenerator {
     }
     typeMapping.getOrElse(declaredType, declaredType.capitalize)
   }
-  
+
   // response classes
   override def processResponseClass(responseClass: String): Option[String] = {
      responseClass match {

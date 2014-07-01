@@ -15,7 +15,8 @@ case class CommandlineConfig(generator: String = "csharp",
                              baseDir: String = "generated-sdk" + java.io.File.separator + "csharp",
                              helperPackage: String = "EdFi.Ods.Generated.Sdk",
                              modelPackage: String = "EdFi.Ods.Generated.Model",
-                             apiPackage: String = "EdFi.Ods.Generated.Api")
+                             apiPackage: String = "EdFi.Ods.Generated.Api",
+                             schoolYear: String = "")
                              
 object EdFiRestGeneratorLauncher {
 
@@ -29,6 +30,7 @@ object EdFiRestGeneratorLauncher {
       opt[String]('h', "helperPackage") required() text("The namespace/package and directory structure for generated SDK helper classes.  Example: 'EdFi.Ods.Generated.Sdk'.")
       opt[String]('m', "modelPackage") required() text("The namespace/package and directory structure for generated SDK model classes.  Example: 'EdFi.Ods.Generated.Model'.")
       opt[String]('a', "apiPackage") required() text("The namespace/package and directory structure for generated SDK API classes.  Example: 'EdFi.Ods.Generated.Api'.")
+      opt[String]('s', "schoolYear") text("Specify a schoolYear  Example: '2014'.")
       help("help") text ("Prints this usage text.")
     }
 

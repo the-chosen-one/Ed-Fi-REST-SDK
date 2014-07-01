@@ -21,6 +21,7 @@ object CSharpEdFiRestGenerator extends BasicCSharpGenerator {
       opt[String]('h', "helperPackage") required() action { (x, c) => c.copy(helperPackage = x)} text("The C# namespace and directory structure for generated SDK helper classes.  Example: 'EdFi.Ods.Generated.Sdk'.")
       opt[String]('m', "modelPackage") required() action { (x, c) => c.copy(modelPackage = x)} text("The C# namespace and directory structure for generated SDK model classes.  Example: 'EdFi.Ods.Generated.Model'.")
       opt[String]('a', "apiPackage") required() action { (x, c) => c.copy(apiPackage = x)} text("The C# namespace and directory structure for generated SDK API classes.  Example: 'EdFi.Ods.Generated.Api'.")
+      opt[String]('s', "schoolYear") action { (x, c) => c.copy(schoolYear = x)} text("Specify a schoolYear  Example: '2014'.")
     }
 
     parser.parse(args, CommandlineConfig()) map { config =>
@@ -28,7 +29,8 @@ object CSharpEdFiRestGenerator extends BasicCSharpGenerator {
       _invokerPackage = Some(config.helperPackage)
       _modelPackage = Some(config.modelPackage)
       _apiPackage = Some(config.apiPackage)
-      
+      _schoolYear = Some(config.schoolYear)
+
       // adapting to old style feed of args to generator, only needs url
       generateClient(Array(config.url))      
     } getOrElse {
@@ -81,6 +83,9 @@ object CSharpEdFiRestGenerator extends BasicCSharpGenerator {
   override def apiPackage = _apiPackage
   private var _apiPackage = Some("EdFi.Ods.Generated.Api")
   
+  // specify a school year
+  override def schoolYear = _schoolYear
+  private var _schoolYear = Some("")
   //by default, model class filenames are same capitalization as resource
   //  need to capitalize to make Pascal case
   override def toModelFilename(name: String) = name.capitalize

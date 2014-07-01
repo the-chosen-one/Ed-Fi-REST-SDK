@@ -90,8 +90,8 @@ object JavaEdFiRestGenerator extends BasicJavaGenerator {
     val charactersToRemove = "-".toSet
     name match {
       case _ if (reservedWords.contains(name)) => escapeReservedWord(name)
-      case "If-Match" => "IfMatch"
-      case "If-None-Match" => "IfNoneMatch"  
+      case "If-Match" => "ifMatch"
+      case "If-None-Match" => "ifNoneMatch"  
       case _ => name.filterNot(charactersToRemove)
     }
   }

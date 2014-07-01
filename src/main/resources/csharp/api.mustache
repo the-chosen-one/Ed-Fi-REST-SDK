@@ -45,7 +45,7 @@
 		}
         {{/queryParams}}
 
-        {{#headerParams}}request.AddHeader("{{paramName}}", {{paramName}});
+        {{#headerParams}}request.AddHeader("{{paramHeader}}", {{paramName}});
         {{/headerParams}}
         
         {{#bodyParam}}request.AddBody({{bodyParam}});

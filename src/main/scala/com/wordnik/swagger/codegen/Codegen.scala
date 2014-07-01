@@ -284,6 +284,7 @@ class Codegen(config: CodegenConfig) {
             queryParams += params.clone
           }
           case "header" => {
+            params += "paramHeader" -> param.name
             params += "paramName" -> config.toVarName(param.name)
             params += "baseName" -> param.name
             params += "required" -> param.required.toString

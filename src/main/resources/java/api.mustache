@@ -46,7 +46,7 @@ public class {{classname}} {
         {{/queryParams}}
 
         Builder builder = target.request(MediaType.APPLICATION_JSON);
-        {{#headerParams}}builder = builder.header("{{paramName}}", {{paramName}});
+        {{#headerParams}}builder = builder.header("{{paramHeader}}", {{paramName}});
         {{/headerParams}}
         
         {{#returnType}}return new RestResponse{{#returnType}}<{{{returnType}}}>{{/returnType}}(builder.method("{{httpMethod}}")) {};

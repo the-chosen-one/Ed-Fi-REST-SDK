@@ -92,9 +92,8 @@ object CSharpEdFiRestGenerator extends BasicCSharpGenerator {
   
   //by default, model classnames are lower camel case in type references
   override def toModelName(name: String) = name.capitalize
-  
   // operation method name
-  override def toMethodName(name: String) = name.capitalize
+  override def toMethodName(name: String): String = name.capitalize
   
   //operation property names on method signature 
   override def toVarName(name: String, flag: Boolean): String = {

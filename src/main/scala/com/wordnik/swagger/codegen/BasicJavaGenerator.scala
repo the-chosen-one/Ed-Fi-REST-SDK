@@ -65,7 +65,7 @@ class BasicJavaGenerator extends BasicGenerator {
   // template used for models
   modelTemplateFiles += "model.mustache" -> ".java"
 
-  // template used for models
+  // template used for apis
   apiTemplateFiles += "api.mustache" -> ".java"
 
   override def reservedWords = Set("abstract", "continue", "for", "new", "switch", "assert", 

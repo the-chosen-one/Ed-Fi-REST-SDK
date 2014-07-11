@@ -36,14 +36,12 @@ Parameter names for the command to run the generator -
 * Model Namespace - Namespace for the entities that are exchanged with the REST API.
 * schoolYear - Specifying a schoolYear (e.g. 2014)
 
-** (Important: for "other" section, please do not specify a schoolYear **
-
 **C#**
 
 1) Generate C# source files by running the generator once for each for each API section: descriptors, resources, types and other
   
 ```
-java -jar sdk-generate.jar csharp --url https://{Domain root of API}/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace} --schoolYear {schoolYear}
+java -jar sdk-generate.jar csharp --url https://{Domain root of API}/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace}
 ```
 
 2) Create a new class library in Visual Studio and include all of the generated files.
@@ -96,7 +94,7 @@ foreach(var school in schools)
 1) Generate Java source files by running the generator once for each for each API section: descriptors, resources, and types.
 
 ```
-java -jar sdk-generate.jar java --url https://tn-rest-production.cloudapp.net/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace} --schoolYear {schoolYear}
+java -jar sdk-generate.jar java --url https://tn-rest-production.cloudapp.net/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace}
 ```
 
 2) Create a new Maven project in Eclipse and import all of the generated files.
@@ -160,7 +158,7 @@ for (School school : response.readEntity()) {
 
 4. then You can generate each of the C# source files using a powershell command, just like the one mentioned above:
 ```
-   java -jar sdk-generate.jar csharp --url https://{Domain root of API}/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace} --schoolYear {schoolYear}
+   java -jar sdk-generate.jar csharp --url https://{Domain root of API}/metadata/{section}/api-docs --baseDir {destination folder} --apiPackage {API namespace} --helperPackage {SDK namespace} --modelPackage {Model namespace}
 ```
 
 

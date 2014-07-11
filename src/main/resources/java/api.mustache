@@ -6,6 +6,7 @@ import {{invokerPackage}}.RestResponse;
 
 import java.util.*;
 
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
@@ -15,9 +16,14 @@ import javax.ws.rs.core.Response;
 {{#operations}}
 public class {{classname}} {
     private final WebTarget baseTarget;
-  
-    public {{classname}}(WebTarget baseTarget) {
-        this.baseTarget = baseTarget;
+  	
+  	public {{classname}}(WebTarget baseTarget) {
+    	 this.baseTarget = baseTarget;
+    }
+  	
+    public {{classname}}(WebTarget baseTarget, Integer year) {
+    	WebTarget newTarget = baseTarget.path(year.toString());
+        this.baseTarget = newTarget;
     }
 
     {{#operation}}

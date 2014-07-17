@@ -109,6 +109,13 @@ object CSharpEdFiRestGenerator extends BasicCSharpGenerator {
     }
   }
   
+  override def toApiName(name: String) = {
+    name.replaceAll("\\{","").replaceAll("\\}", "").replaceAll("bulkoperations", "BulkOperations") match {
+      case s: String if(s.length > 0) => s(0).toUpper + s.substring(1) + "Api"
+      case _ => "Api"
+    }
+  }
+  
   override def toDeclaredType(dt: String): String = {
     val declaredType = dt.indexOf("[") match {
       case -1 => dt

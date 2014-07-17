@@ -45,9 +45,9 @@ object CSharpEdFiRestGenerator extends BasicCSharpGenerator {
   override def typeMapping = Map(
     "array" -> "List",
     "boolean" -> "bool?",
-    "date" -> "DateTime",
-    "Date" -> "DateTime",
-    "date-time" -> "DateTime",
+    "date" -> "DateTime?",
+    "Date" -> "DateTime?",
+    "date-time" -> "DateTime?",
     "double" -> "double?",
     "float" -> "float?",
     "int" -> "int?",

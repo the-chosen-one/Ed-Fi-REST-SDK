@@ -12,10 +12,12 @@
     public class {{classname}} {
 
       private readonly IRestClient client;
+	  private readonly short schoolYear;
 
-      public {{classname}}(IRestClient client)
+      public {{classname}}(IRestClient client, short schoolYear)
       {
             this.client = client;
+			this.schoolYear = schoolYear;
       }
       
       {{#operation}}
@@ -27,7 +29,7 @@
       {{#hasMore}} {{/hasMore}}{{/allParams}}
       /// <returns></returns>
       public {{#returnType}}IRestResponse<{{{returnType}}}> {{/returnType}}{{^returnType}}IRestResponse {{/returnType}} {{nickname}}({{#allParams}}{{{dataType}}} {{paramName}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
-        var request = new RestRequest("{{path}}", Method.{{httpMethod}});
+        var request = new RestRequest(schoolYear + "{{path}}", Method.{{httpMethod}});
         request.RequestFormat = DataFormat.Json;
 
         {{#pathParams}}request.AddUrlSegment("{{paramName}}", {{paramName}});

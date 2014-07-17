@@ -15,9 +15,11 @@ import javax.ws.rs.core.Response;
 {{#operations}}
 public class {{classname}} {
     private final WebTarget baseTarget;
+	private final short schoolYear;
   
-    public {{classname}}(WebTarget baseTarget) {
+    public {{classname}}(WebTarget baseTarget, short schoolYear) {
         this.baseTarget = baseTarget;
+		this.schoolYear = schoolYear;
     }
 
     {{#operation}}
@@ -28,7 +30,7 @@ public class {{classname}} {
     {{#hasMore}} {{/hasMore}}{{/allParams}}
       */
     public {{#returnType}}RestResponse<{{{returnType}}}> {{/returnType}}{{^returnType}}Response {{/returnType}} {{nickname}}({{#allParams}}{{{dataType}}} {{paramName}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
-        WebTarget target = baseTarget.path("{{path}}");
+        WebTarget target = baseTarget.path(schoolYear + "{{path}}");
 
         {{#requiredParamCount}}
         // verify required params are set

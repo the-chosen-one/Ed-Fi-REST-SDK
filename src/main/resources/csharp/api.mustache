@@ -12,16 +12,18 @@
     public class {{classname}} {
 
       private readonly IRestClient client;
-
+	  private string schoolYear;
+	  
       public {{classname}}(IRestClient client)
       {
             this.client = client;
+            this.schoolYear = "";
       }
       
       public {{classname}}(IRestClient client, int? year)
       {
-      		client.BaseUrl = client.BaseUrl + "/" + year.ToString();
-            this.client = client;
+      		this.client = client;
+            this.schoolYear = year.ToString();
       }
       
       {{#operation}}
@@ -33,7 +35,7 @@
       {{#hasMore}} {{/hasMore}}{{/allParams}}
       /// <returns></returns>
       public {{#returnType}}IRestResponse<{{{returnType}}}> {{/returnType}}{{^returnType}}IRestResponse {{/returnType}} {{nickname}}({{#allParams}}{{{dataType}}} {{paramName}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) {
-        var request = new RestRequest("{{path}}", Method.{{httpMethod}});
+        var request = new RestRequest(schoolYear+"{{path}}", Method.{{httpMethod}});
         request.RequestFormat = DataFormat.Json;
 
         {{#pathParams}}request.AddUrlSegment("{{paramName}}", {{paramName}});

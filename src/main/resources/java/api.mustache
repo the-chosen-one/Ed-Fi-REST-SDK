@@ -46,12 +46,21 @@ public class {{classname}} {
         {{/queryParams}}
 
         Builder builder = target.request(MediaType.APPLICATION_JSON);
+        {{#bodyParam}}Response response = builder.method("{{httpMethod}}", Entity.json({{bodyParam}}));
+        {{/bodyParam}}
         {{#headerParams}}builder = builder.header("{{paramHeader}}", {{paramName}});
         {{/headerParams}}
-        
+
+        {{#bodyParam}}
+        List<String> location = response.getStringHeaders().getOrDefault("Location", null);
+        if(location != null && !location.toString().isEmpty())
+        {
+            body.setId(location.get(0).split("/")[location.get(0).split("/").length-1]);       
+        }
+        {{/bodyParam}}
         {{#returnType}}return new RestResponse{{#returnType}}<{{{returnType}}}>{{/returnType}}(builder.method("{{httpMethod}}")) {};
         {{/returnType}}
-        {{^returnType}}{{#bodyParam}}return builder.method("{{httpMethod}}", Entity.json({{bodyParam}}));
+        {{^returnType}}{{#bodyParam}}return response;
         {{/bodyParam}}
         {{^bodyParam}}return builder.method("{{httpMethod}}");
         {{/bodyParam}}
@@ -60,4 +69,3 @@ public class {{classname}} {
     {{/operation}}
 }
 {{/operations}}
-

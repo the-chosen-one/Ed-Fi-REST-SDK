@@ -1,5 +1,6 @@
   using System;
   using System.Collections.Generic;
+  using System.Linq;
   using {{invokerPackage}};
   using {{modelPackage}};
   using RestSharp;
@@ -50,8 +51,18 @@
         
         {{#bodyParam}}request.AddBody({{bodyParam}});
         {{/bodyParam}}
+  
+        var response = client.Execute{{#returnType}}<{{{returnType}}}>{{/returnType}}(request);
 
-        return client.Execute{{#returnType}}<{{{returnType}}}>{{/returnType}}(request);   
+        {{#bodyParam}}var location = response.Headers.FirstOrDefault(x => x.Name == "Location");
+
+        if (location != null && !string.IsNullOrWhiteSpace(location.Value.ToString()))
+          {
+              body.id = location.Value.ToString().Split('/').Last();
+          }
+        {{/bodyParam}}
+
+        return response;
       }
       {{/operation}}
     }

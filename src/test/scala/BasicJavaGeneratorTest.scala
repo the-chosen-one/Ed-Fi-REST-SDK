@@ -121,7 +121,7 @@ class BasicJavaGeneratorTest extends FlatSpec with ShouldMatchers {
    * classes
    */
   it should "honor the import mapping" in {
-  	config.importMapping("Date") should be ("java.util.Date")
+  	config.importMapping("Date") should be ("java.sql.Date")
   }
 
   /*
